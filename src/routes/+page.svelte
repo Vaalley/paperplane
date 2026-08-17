@@ -1,5 +1,6 @@
 <script lang="ts">
   import SearchControls from '$lib/components/SearchControls.svelte';
+  import SaveButton from '$lib/components/SaveButton.svelte';
 
   let { data } = $props();
 
@@ -28,14 +29,12 @@
         <span class="grid size-9 place-items-center rounded-xl bg-neutral-950 text-white">↗</span>
         <span>Paperplane</span>
       </a>
-      <a
-        href="https://arxiv.org"
-        target="_blank"
-        rel="noreferrer"
-        class="text-sm text-neutral-500 transition hover:text-neutral-950"
-      >
-        arXiv ↗
-      </a>
+      <nav class="flex items-center gap-4 text-sm text-neutral-500" aria-label="Primary navigation">
+        <a href="/library" class="transition hover:text-neutral-950">Library</a>
+        <a href="https://arxiv.org" target="_blank" rel="noreferrer" class="transition hover:text-neutral-950">
+          arXiv ↗
+        </a>
+      </nav>
     </div>
   </header>
 
@@ -118,7 +117,8 @@
                     <p class="mt-4 line-clamp-3 text-sm leading-6 text-neutral-600">{paper.summary}</p>
                   </div>
 
-                  <div class="flex shrink-0 gap-2">
+                  <div class="flex shrink-0 flex-wrap gap-2">
+                    <SaveButton {paper} compact />
                     <a
                       href={paper.abstractUrl}
                       target="_blank"

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import SaveButton from '$lib/components/SaveButton.svelte';
+
   let { data } = $props();
 
   const formatDate = (value: string | null) => {
@@ -28,12 +30,14 @@
         <span class="grid size-9 place-items-center rounded-xl bg-neutral-950 text-white">↗</span>
         <span>Paperplane</span>
       </a>
-      <a
-        href="/"
-        class="rounded-lg text-sm text-neutral-500 outline-none transition hover:text-neutral-950 focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-4"
-      >
-        Search papers
-      </a>
+      <nav class="flex items-center gap-4 text-sm text-neutral-500" aria-label="Primary navigation">
+        <a href="/library" class="rounded-lg outline-none transition hover:text-neutral-950 focus-visible:ring-2 focus-visible:ring-neutral-950">
+          Library
+        </a>
+        <a href="/" class="rounded-lg outline-none transition hover:text-neutral-950 focus-visible:ring-2 focus-visible:ring-neutral-950">
+          Search
+        </a>
+      </nav>
     </div>
   </header>
 
@@ -105,6 +109,7 @@
         </div>
 
         <div class="mt-6 grid gap-2 border-t border-black/8 pt-5">
+          <SaveButton paper={data.paper} />
           {#if data.paper.pdfUrl}
             <a
               href={data.paper.pdfUrl}
