@@ -1,6 +1,5 @@
+import { normalizeArxivId } from './id.ts';
 import type { ArxivSearchResponse, Paper } from './types.ts';
-
-const ARXIV_ID_PATTERN = /^(?:\d{4}\.\d{4,5}|[a-z-]+(?:\.[A-Z]{2})?\/\d{7})(?:v\d+)?$/i;
 
 const decodeXml = (value: string): string =>
   value.replace(/&(#x[\da-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (entity, code: string) => {
@@ -64,30 +63,8 @@ const feedNumber = (xml: string, tag: string): number => {
   return Number.isNaN(parsed) ? 0 : parsed;
 };
 
-const arxivIdFrom = (rawId: string): string | null => {
-  const value = rawId.trim().replace(/^arXiv:/i, '');
-  let candidate = value;
-
-  try {
-    const url = new URL(value);
-    const marker = '/abs/';
-    const markerIndex = url.pathname.indexOf(marker);
-    candidate = markerIndex >= 0 ? url.pathname.slice(markerIndex + marker.length) : '';
-  } catch {
-    // Bare arXiv identifiers are valid feed IDs too.
-  }
-
-  try {
-    candidate = decodeURIComponent(candidate);
-  } catch {
-    return null;
-  }
-
-  return ARXIV_ID_PATTERN.test(candidate) ? candidate : null;
-};
-
 const parseEntry = (entry: string): Paper | null => {
-  const id = arxivIdFrom(elementText(entry, 'id'));
+  const id = normalizeArxivId(elementText(entry, 'id'));
   if (!id) return null;
 
   const authors = elements(entry, 'author')
