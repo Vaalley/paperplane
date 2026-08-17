@@ -1,5 +1,6 @@
 import { normalizeArxivId } from './id.ts';
 import { parseArxivFeed } from './parser.ts';
+import { buildArxivSearchQuery } from './search.ts';
 import type { ArxivSearchOptions, ArxivSearchResponse, Paper } from './types.ts';
 
 const ARXIV_ENDPOINT = 'https://export.arxiv.org/api/query';
@@ -42,7 +43,7 @@ export async function searchArxiv(
   }
 
   const endpoint = new URL(ARXIV_ENDPOINT);
-  endpoint.searchParams.set('search_query', `all:${normalizedQuery}`);
+  endpoint.searchParams.set('search_query', buildArxivSearchQuery(normalizedQuery, options));
   endpoint.searchParams.set('start', String(Math.max(0, options.start ?? 0)));
   endpoint.searchParams.set(
     'max_results',
