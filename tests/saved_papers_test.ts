@@ -31,6 +31,11 @@ const paper: Paper = {
   abstractUrl: 'https://arxiv.org/abs/2401.12345v2',
   pdfUrl: 'https://arxiv.org/pdf/2401.12345v2',
   categories: ['cs.AI'],
+  primaryCategory: 'cs.AI',
+  comment: null,
+  journalReference: null,
+  doi: null,
+  versions: [],
 };
 
 Deno.test('saves, replaces, and removes paper metadata', () => {
@@ -49,4 +54,24 @@ Deno.test('toggles papers and ignores malformed persisted data', () => {
   assertEquals(toggleSavedPaper(paper, storage).length, 0);
   storage.setItem('paperplane:saved-papers:v1', '{not-json');
   assertEquals(readSavedPapers(storage), []);
+});
+
+Deno.test('migrates saved paper metadata from the original local format', () => {
+  const storage = memoryStorage();
+  const {
+    primaryCategory: _primaryCategory,
+    comment: _comment,
+    journalReference: _journalReference,
+    doi: _doi,
+    versions: _versions,
+    ...legacyPaper
+  } = paper;
+  storage.setItem(
+    'paperplane:saved-papers:v1',
+    JSON.stringify([{ ...legacyPaper, savedAt: '2024-02-03T00:00:00Z' }]),
+  );
+
+  const migrated = readSavedPapers(storage)[0];
+  assertEquals(migrated.primaryCategory, null);
+  assertEquals(migrated.versions, []);
 });

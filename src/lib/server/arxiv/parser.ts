@@ -73,6 +73,7 @@ const parseEntry = (entry: string): Paper | null => {
   const categories = openingTags(entry, 'category')
     .map((category) => attribute(category, 'term'))
     .filter((category): category is string => Boolean(category));
+  const primaryCategoryTag = openingTags(entry, 'primary_category')[0];
   const links = openingTags(entry, 'link').map((link) => ({
     href: attribute(link, 'href'),
     rel: attribute(link, 'rel'),
@@ -94,6 +95,11 @@ const parseEntry = (entry: string): Paper | null => {
     abstractUrl: abstractLink?.href || `https://arxiv.org/abs/${id}`,
     pdfUrl: pdfLink?.href || null,
     categories: [...new Set(categories)],
+    primaryCategory: primaryCategoryTag ? attribute(primaryCategoryTag, 'term') : null,
+    comment: elementText(entry, 'comment') || null,
+    journalReference: elementText(entry, 'journal_ref') || null,
+    doi: elementText(entry, 'doi') || null,
+    versions: [],
   };
 };
 

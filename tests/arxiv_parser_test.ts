@@ -27,6 +27,11 @@ Deno.test('parses feed metadata, authors, categories, entities, and link attribu
     abstractUrl: 'https://arxiv.org/abs/2401.12345v2',
     pdfUrl: 'https://arxiv.org/pdf/2401.12345v2',
     categories: ['cs.AI', 'cs.LG'],
+    primaryCategory: 'cs.AI',
+    comment: 'Accepted at ExampleConf 2024',
+    journalReference: 'Journal of Representative Research 1 (2024)',
+    doi: '10.1000/example.123',
+    versions: [],
   });
   assertEquals(result.papers[1].id, 'hep-th/9901001v1');
   assertEquals(result.papers[1].title, 'Legacy identifier');
@@ -47,5 +52,10 @@ Deno.test('skips entries without a valid ID and represents missing fields explic
     abstractUrl: 'https://arxiv.org/abs/2307.00001',
     pdfUrl: null,
     categories: [],
+    primaryCategory: null,
+    comment: null,
+    journalReference: null,
+    doi: null,
+    versions: [],
   });
 });
