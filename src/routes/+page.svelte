@@ -3,8 +3,10 @@
 
   const formatDate = (value: string | null) => {
     if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
     return new Intl.DateTimeFormat('en', { year: 'numeric', month: 'short', day: 'numeric' }).format(
-      new Date(value)
+      date
     );
   };
 </script>
@@ -100,7 +102,12 @@
                       {/each}
                     </div>
                     <h3 class="text-xl font-semibold leading-snug tracking-[-0.02em] text-neutral-950">
-                      {paper.title}
+                      <a
+                        href={`/paper/${encodeURIComponent(paper.id)}`}
+                        class="rounded-sm outline-none hover:underline focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-4"
+                      >
+                        {paper.title}
+                      </a>
                     </h3>
                     <p class="mt-2 text-sm text-neutral-500">
                       {paper.authors.slice(0, 5).join(', ')}{paper.authors.length > 5 ? ' et al.' : ''}

@@ -1,5 +1,6 @@
+import { normalizeArxivId } from './id.ts';
 import { parseArxivFeed } from './parser.ts';
-import type { ArxivSearchOptions, ArxivSearchResponse } from './types.ts';
+import type { ArxivSearchOptions, ArxivSearchResponse, Paper } from './types.ts';
 
 const ARXIV_ENDPOINT = 'https://export.arxiv.org/api/query';
 const USER_AGENT = 'Paperplane/0.0.1 (https://github.com/Vaalley/paperplane)';
@@ -8,6 +9,25 @@ export class ArxivClientError extends Error {
   constructor(message: string, options?: ErrorOptions) {
     super(message, options);
     this.name = 'ArxivClientError';
+  }
+}
+
+async function fetchFeed(endpoint: URL, fetcher: typeof fetch): Promise<ArxivSearchResponse> {
+  let response: Response;
+  try {
+    response = await fetcher(endpoint, { headers: { 'User-Agent': USER_AGENT } });
+  } catch (cause) {
+    throw new ArxivClientError('Could not reach arXiv.', { cause });
+  }
+
+  if (!response.ok) {
+    throw new ArxivClientError(`arXiv returned ${response.status}.`);
+  }
+
+  try {
+    return parseArxivFeed(await response.text());
+  } catch (cause) {
+    throw new ArxivClientError('arXiv returned an unreadable feed.', { cause });
   }
 }
 
@@ -31,20 +51,20 @@ export async function searchArxiv(
   endpoint.searchParams.set('sortBy', options.sortBy ?? 'relevance');
   endpoint.searchParams.set('sortOrder', options.sortOrder ?? 'descending');
 
-  let response: Response;
-  try {
-    response = await fetcher(endpoint, { headers: { 'User-Agent': USER_AGENT } });
-  } catch (cause) {
-    throw new ArxivClientError('Could not reach arXiv.', { cause });
-  }
+  return await fetchFeed(endpoint, fetcher);
+}
 
-  if (!response.ok) {
-    throw new ArxivClientError(`arXiv returned ${response.status}.`);
-  }
+export async function getArxivPaper(
+  id: string,
+  fetcher: typeof fetch = fetch,
+): Promise<Paper | null> {
+  const normalizedId = normalizeArxivId(id);
+  if (!normalizedId) return null;
 
-  try {
-    return parseArxivFeed(await response.text());
-  } catch (cause) {
-    throw new ArxivClientError('arXiv returned an unreadable feed.', { cause });
-  }
+  const endpoint = new URL(ARXIV_ENDPOINT);
+  endpoint.searchParams.set('id_list', normalizedId);
+  endpoint.searchParams.set('max_results', '1');
+
+  const response = await fetchFeed(endpoint, fetcher);
+  return response.papers[0] ?? null;
 }
