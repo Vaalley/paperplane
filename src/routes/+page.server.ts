@@ -4,8 +4,7 @@ import {
   type Paper,
   searchArxiv,
 } from '$lib/server/arxiv/index.ts';
-// deno-lint-ignore no-sloppy-imports -- SvelteKit generates this virtual module.
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad } from './$types.d.ts';
 
 const PAGE_SIZE = 12;
 type SearchSort = 'relevance' | 'newest' | 'oldest';
