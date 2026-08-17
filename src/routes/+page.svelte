@@ -1,7 +1,7 @@
 <script lang="ts">
   let { data } = $props();
 
-  const formatDate = (value: string) => {
+  const formatDate = (value: string | null) => {
     if (!value) return '';
     return new Intl.DateTimeFormat('en', { year: 'numeric', month: 'short', day: 'numeric' }).format(
       new Date(value)
@@ -110,21 +110,23 @@
 
                   <div class="flex shrink-0 gap-2">
                     <a
-                      href={`https://arxiv.org/abs/${paper.id}`}
+                      href={paper.abstractUrl}
                       target="_blank"
                       rel="noreferrer"
                       class="rounded-xl border border-black/10 px-3 py-2 text-sm transition hover:bg-neutral-50"
                     >
                       Abstract
                     </a>
-                    <a
-                      href={paper.pdfUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      class="rounded-xl bg-neutral-950 px-3 py-2 text-sm text-white transition hover:bg-neutral-800"
-                    >
-                      PDF ↗
-                    </a>
+                    {#if paper.pdfUrl}
+                      <a
+                        href={paper.pdfUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        class="rounded-xl bg-neutral-950 px-3 py-2 text-sm text-white transition hover:bg-neutral-800"
+                      >
+                        PDF ↗
+                      </a>
+                    {/if}
                   </div>
                 </div>
               </article>

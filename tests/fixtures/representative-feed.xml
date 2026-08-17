@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">
+  <opensearch:totalResults>42</opensearch:totalResults>
+  <opensearch:startIndex>10</opensearch:startIndex>
+  <opensearch:itemsPerPage>2</opensearch:itemsPerPage>
+  <entry>
+    <id>http://arxiv.org/abs/2401.12345v2</id>
+    <updated>2024-02-02T12:00:00Z</updated>
+    <published>2024-01-31T10:00:00Z</published>
+    <title>
+      A &amp; B: &#x3B1; representative paper
+    </title>
+    <summary>First line.
+      Second &lt;line&gt;.</summary>
+    <author>
+      <name>Ada Lovelace</name>
+    </author>
+    <author>
+      <name>Alan Turing</name>
+    </author>
+    <category scheme="http://arxiv.org/schemas/atom" term="cs.AI" />
+    <category term='cs.LG' scheme='http://arxiv.org/schemas/atom'></category>
+    <category term="cs.AI" />
+    <link href="https://arxiv.org/abs/2401.12345v2" rel="alternate" type="text/html" />
+    <link title="pdf" type="application/pdf" href="https://arxiv.org/pdf/2401.12345v2"
+      rel="related" />
+  </entry>
+  <entry>
+    <id>arXiv:hep-th/9901001v1</id>
+    <title>
+      <![CDATA[Legacy identifier]]>
+    </title>
+    <link type='application/pdf' href='https://arxiv.org/pdf/hep-th/9901001v1' />
+  </entry>
+</feed>

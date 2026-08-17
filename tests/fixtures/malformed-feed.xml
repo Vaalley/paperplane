@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<atom:feed xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:openSearch="http://a9.com/-/spec/opensearch/1.1/">
+  <openSearch:totalResults>not-a-number</openSearch:totalResults>
+  <atom:entry>
+    <atom:id>not an arxiv identifier</atom:id>
+    <atom:title>This malformed entry is ignored</atom:title>
+  </atom:entry>
+  <atom:entry>
+    <atom:id>https://arxiv.org/abs/2307.00001</atom:id>
+    <atom:title>Minimal paper</atom:title>
+    <atom:author>
+      <atom:name></atom:name>
+    </atom:author>
+    <atom:category scheme="test" />
+    <atom:link rel="alternate" href="https://arxiv.org/abs/2307.00001" />
+  </atom:entry>
+</atom:feed>
