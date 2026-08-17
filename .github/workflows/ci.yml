@@ -21,10 +21,7 @@ jobs:
           deno-version: v2.9.5
 
       - name: Install dependencies
-        run: deno install
-
-      - name: Capture lockfile for repository bootstrap
-        run: echo "LOCKFILE_BASE64=$(base64 -w0 deno.lock)"
+        run: deno install --frozen
 
       - name: Validate
         run: deno task validate
