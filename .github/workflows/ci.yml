@@ -23,5 +23,8 @@ jobs:
       - name: Install dependencies
         run: deno install
 
+      - name: Capture lockfile for repository bootstrap
+        run: echo "LOCKFILE_BASE64=$(base64 -w0 deno.lock)"
+
       - name: Validate
         run: deno task validate
