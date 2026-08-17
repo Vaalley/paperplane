@@ -22,12 +22,13 @@ const isStringArray = (value: unknown): value is string[] =>
 const isNullableString = (value: unknown): value is string | null =>
   typeof value === 'string' || value === null;
 
-const isSavedPaper = (value: unknown): value is SavedPaper => {
-  if (!value || typeof value !== 'object') return false;
+const nullableString = (value: unknown): string | null => isNullableString(value) ? value : null;
+
+const savedPaperFrom = (value: unknown): SavedPaper | null => {
+  if (!value || typeof value !== 'object') return null;
   const paper = value as Record<string, unknown>;
 
-  return (
-    typeof paper.id === 'string' &&
+  const valid = typeof paper.id === 'string' &&
     typeof paper.title === 'string' &&
     typeof paper.summary === 'string' &&
     isStringArray(paper.authors) &&
@@ -36,8 +37,42 @@ const isSavedPaper = (value: unknown): value is SavedPaper => {
     typeof paper.abstractUrl === 'string' &&
     isNullableString(paper.pdfUrl) &&
     isStringArray(paper.categories) &&
-    typeof paper.savedAt === 'string'
-  );
+    typeof paper.savedAt === 'string';
+  if (!valid) return null;
+
+  const versions = Array.isArray(paper.versions)
+    ? paper.versions.flatMap((value) => {
+      if (!value || typeof value !== 'object') return [];
+      const version = value as Record<string, unknown>;
+      return Number.isInteger(version.version) &&
+          typeof version.submitted === 'string' &&
+          isNullableString(version.size)
+        ? [{
+          version: version.version as number,
+          submitted: version.submitted,
+          size: version.size,
+        }]
+        : [];
+    })
+    : [];
+
+  return {
+    id: paper.id as string,
+    title: paper.title as string,
+    summary: paper.summary as string,
+    authors: paper.authors as string[],
+    published: paper.published as string | null,
+    updated: paper.updated as string | null,
+    abstractUrl: paper.abstractUrl as string,
+    pdfUrl: paper.pdfUrl as string | null,
+    categories: paper.categories as string[],
+    primaryCategory: nullableString(paper.primaryCategory),
+    comment: nullableString(paper.comment),
+    journalReference: nullableString(paper.journalReference),
+    doi: nullableString(paper.doi),
+    versions,
+    savedAt: paper.savedAt as string,
+  };
 };
 
 const notify = (storage: StorageLike | null) => {
@@ -51,7 +86,12 @@ export function readSavedPapers(storage: StorageLike | null = browserStorage()):
 
   try {
     const value: unknown = JSON.parse(storage.getItem(STORAGE_KEY) ?? '[]');
-    return Array.isArray(value) ? value.filter(isSavedPaper) : [];
+    return Array.isArray(value)
+      ? value.flatMap((paper) => {
+        const savedPaper = savedPaperFrom(paper);
+        return savedPaper ? [savedPaper] : [];
+      })
+      : [];
   } catch {
     return [];
   }

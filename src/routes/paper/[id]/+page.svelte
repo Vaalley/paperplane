@@ -1,4 +1,5 @@
 <script lang="ts">
+  import CitationActions from '$lib/components/CitationActions.svelte';
   import SaveButton from '$lib/components/SaveButton.svelte';
 
   let { data } = $props();
@@ -53,7 +54,12 @@
       <article class="min-w-0">
         <div class="flex flex-wrap items-center gap-2 text-sm text-neutral-500">
           <span class="font-medium text-neutral-700">arXiv:{data.paper.id}</span>
-          {#each data.paper.categories.slice(0, 3) as category}
+          {#if data.paper.primaryCategory}
+            <span class="rounded-full bg-neutral-950 px-2.5 py-1 text-white">
+              Primary · {data.paper.primaryCategory}
+            </span>
+          {/if}
+          {#each data.paper.categories.filter((category) => category !== data.paper.primaryCategory).slice(0, 2) as category}
             <span class="rounded-full bg-white px-2.5 py-1 ring-1 ring-black/8">{category}</span>
           {/each}
         </div>
@@ -75,6 +81,33 @@
             {data.paper.summary || 'No abstract was provided by arXiv for this record.'}
           </p>
         </section>
+
+        <section class="mt-12 border-t border-black/10 pt-8" aria-labelledby="citation-heading">
+          <h2 id="citation-heading" class="text-sm font-medium uppercase tracking-[0.16em] text-neutral-400">
+            Cite this paper
+          </h2>
+          <div class="mt-4">
+            <CitationActions paper={data.paper} />
+          </div>
+        </section>
+
+        {#if data.paper.versions.length > 0}
+          <section class="mt-12 border-t border-black/10 pt-8" aria-labelledby="versions-heading">
+            <h2 id="versions-heading" class="text-sm font-medium uppercase tracking-[0.16em] text-neutral-400">
+              Version history
+            </h2>
+            <ol class="mt-4 divide-y divide-black/8 rounded-2xl border border-black/8 bg-white px-5">
+              {#each [...data.paper.versions].reverse() as version}
+                <li class="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-1 py-4 text-sm">
+                  <span class="font-medium text-neutral-800">Version {version.version}</span>
+                  <span class="text-neutral-500">
+                    {version.submitted}{version.size ? ` · ${version.size}` : ''}
+                  </span>
+                </li>
+              {/each}
+            </ol>
+          </section>
+        {/if}
 
         {#if data.paper.categories.length > 0}
           <section class="mt-12 border-t border-black/10 pt-8" aria-labelledby="categories-heading">
@@ -106,6 +139,31 @@
             <p class="text-neutral-400">Identifier</p>
             <p class="mt-1 break-all font-mono text-xs text-neutral-700">{data.paper.id}</p>
           </div>
+          {#if data.paper.comment}
+            <div>
+              <p class="text-neutral-400">Comment</p>
+              <p class="mt-1 text-neutral-700">{data.paper.comment}</p>
+            </div>
+          {/if}
+          {#if data.paper.journalReference}
+            <div>
+              <p class="text-neutral-400">Journal reference</p>
+              <p class="mt-1 text-neutral-700">{data.paper.journalReference}</p>
+            </div>
+          {/if}
+          {#if data.paper.doi}
+            <div>
+              <p class="text-neutral-400">DOI</p>
+              <a
+                href={`https://doi.org/${data.paper.doi}`}
+                target="_blank"
+                rel="noreferrer"
+                class="mt-1 block break-all text-neutral-700 underline decoration-black/20 underline-offset-4 hover:decoration-black"
+              >
+                {data.paper.doi}
+              </a>
+            </div>
+          {/if}
         </div>
 
         <div class="mt-6 grid gap-2 border-t border-black/8 pt-5">

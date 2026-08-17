@@ -1,7 +1,10 @@
 import { getArxivPaper, searchArxiv } from '../src/lib/server/arxiv/client.ts';
 
-const fixture = await Deno.readTextFile(
+const feedFixture = await Deno.readTextFile(
   new URL('./fixtures/representative-feed.xml', import.meta.url),
+);
+const historyFixture = await Deno.readTextFile(
+  new URL('./fixtures/version-history.html', import.meta.url),
 );
 
 const assertEquals = (actual: unknown, expected: unknown) => {
@@ -11,17 +14,27 @@ const assertEquals = (actual: unknown, expected: unknown) => {
 };
 
 Deno.test('fetches one paper by normalized arXiv ID', async () => {
-  let requestUrl = '';
+  const requestUrls: string[] = [];
   const fetcher = ((input: string | URL | Request) => {
-    requestUrl = new URL(input instanceof Request ? input.url : input).href;
-    return Promise.resolve(new Response(fixture, { status: 200 }));
+    const requestUrl = new URL(input instanceof Request ? input.url : input).href;
+    requestUrls.push(requestUrl);
+    return Promise.resolve(
+      new Response(requestUrl.startsWith('https://arxiv.org/abs/') ? historyFixture : feedFixture, {
+        status: 200,
+      }),
+    );
   }) as typeof fetch;
 
   const paper = await getArxivPaper('arXiv:2401.12345v2', fetcher);
 
   assertEquals(paper?.id, '2401.12345v2');
-  assertEquals(new URL(requestUrl).searchParams.get('id_list'), '2401.12345v2');
-  assertEquals(new URL(requestUrl).searchParams.get('max_results'), '1');
+  assertEquals(paper?.versions, [
+    { version: 1, submitted: 'Wed, 31 Jan 2024 10:00:00 UTC', size: '512 KB' },
+    { version: 2, submitted: 'Fri, 2 Feb 2024 12:00:00 UTC', size: '520 KB' },
+  ]);
+  assertEquals(new URL(requestUrls[0]).searchParams.get('id_list'), '2401.12345v2');
+  assertEquals(new URL(requestUrls[0]).searchParams.get('max_results'), '1');
+  assertEquals(requestUrls[1], 'https://arxiv.org/abs/2401.12345v2');
 });
 
 Deno.test('rejects an invalid ID without requesting arXiv', async () => {
@@ -39,7 +52,7 @@ Deno.test('maps search filters, sorting, and pagination to arXiv parameters', as
   let requestUrl = '';
   const fetcher = ((input: string | URL | Request) => {
     requestUrl = new URL(input instanceof Request ? input.url : input).href;
-    return Promise.resolve(new Response(fixture, { status: 200 }));
+    return Promise.resolve(new Response(feedFixture, { status: 200 }));
   }) as typeof fetch;
 
   await searchArxiv(

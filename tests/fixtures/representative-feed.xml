@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/"
+  xmlns:arxiv="http://arxiv.org/schemas/atom">
   <opensearch:totalResults>42</opensearch:totalResults>
   <opensearch:startIndex>10</opensearch:startIndex>
   <opensearch:itemsPerPage>2</opensearch:itemsPerPage>
@@ -21,6 +22,10 @@
     <category scheme="http://arxiv.org/schemas/atom" term="cs.AI" />
     <category term='cs.LG' scheme='http://arxiv.org/schemas/atom'></category>
     <category term="cs.AI" />
+    <arxiv:primary_category term="cs.AI" scheme="http://arxiv.org/schemas/atom" />
+    <arxiv:comment>Accepted at ExampleConf 2024</arxiv:comment>
+    <arxiv:journal_ref>Journal of Representative Research 1 (2024)</arxiv:journal_ref>
+    <arxiv:doi>10.1000/example.123</arxiv:doi>
     <link href="https://arxiv.org/abs/2401.12345v2" rel="alternate" type="text/html" />
     <link title="pdf" type="application/pdf" href="https://arxiv.org/pdf/2401.12345v2"
       rel="related" />

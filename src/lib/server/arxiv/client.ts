@@ -2,6 +2,7 @@ import { normalizeArxivId } from './id.ts';
 import { parseArxivFeed } from './parser.ts';
 import { buildArxivSearchQuery } from './search.ts';
 import type { ArxivSearchOptions, ArxivSearchResponse, Paper } from './types.ts';
+import { parseArxivVersionHistory } from './version-history.ts';
 
 const ARXIV_ENDPOINT = 'https://export.arxiv.org/api/query';
 const USER_AGENT = 'Paperplane/0.0.1 (https://github.com/Vaalley/paperplane)';
@@ -67,5 +68,18 @@ export async function getArxivPaper(
   endpoint.searchParams.set('max_results', '1');
 
   const response = await fetchFeed(endpoint, fetcher);
-  return response.papers[0] ?? null;
+  const paper = response.papers[0];
+  if (!paper) return null;
+
+  try {
+    const historyResponse = await fetcher(paper.abstractUrl, {
+      headers: { 'User-Agent': USER_AGENT },
+    });
+    if (!historyResponse.ok) return paper;
+
+    return { ...paper, versions: parseArxivVersionHistory(await historyResponse.text()) };
+  } catch {
+    // Submission history enriches the record but should never make the paper unavailable.
+    return paper;
+  }
 }
