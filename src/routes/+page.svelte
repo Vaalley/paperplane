@@ -1,4 +1,6 @@
 <script lang="ts">
+  import SearchControls from '$lib/components/SearchControls.svelte';
+
   let { data } = $props();
 
   const formatDate = (value: string | null) => {
@@ -48,21 +50,13 @@
         wrestling with them.
       </p>
 
-      <form method="GET" class="mt-9 flex gap-2 rounded-2xl border border-black/10 bg-white p-2 shadow-sm">
-        <input
-          name="q"
-          value={data.query}
-          aria-label="Search papers"
-          placeholder="Transformers, protein folding, quantum gravity…"
-          class="min-w-0 flex-1 rounded-xl bg-transparent px-4 py-3 outline-none placeholder:text-neutral-400"
-        />
-        <button
-          type="submit"
-          class="rounded-xl bg-neutral-950 px-5 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
-        >
-          Search
-        </button>
-      </form>
+      <SearchControls
+        query={data.query}
+        sort={data.sort}
+        category={data.category}
+        fromDate={data.fromDate}
+        toDate={data.toDate}
+      />
     </section>
 
     {#if data.error}
@@ -78,12 +72,21 @@
             <p class="text-sm text-neutral-500">Results for</p>
             <h2 class="mt-1 text-2xl font-semibold tracking-tight">“{data.query}”</h2>
           </div>
-          <span class="text-sm text-neutral-400">{data.papers.length} shown</span>
+          <span class="text-right text-sm text-neutral-400">
+            {#if data.totalResults > 0}
+              {Math.min((data.page - 1) * data.pageSize + 1, data.totalResults)}–{Math.min(
+                data.page * data.pageSize,
+                data.totalResults
+              )} of {data.totalResults.toLocaleString()}
+            {:else}
+              0 results
+            {/if}
+          </span>
         </div>
 
         {#if data.papers.length === 0}
           <div class="rounded-2xl border border-black/8 bg-white p-8 text-neutral-500">
-            No papers found. Try a broader query.
+            {data.page > 1 ? 'No papers are available on this page.' : 'No papers found. Try broader filters.'}
           </div>
         {:else}
           <div class="grid gap-3">
@@ -139,6 +142,38 @@
               </article>
             {/each}
           </div>
+        {/if}
+
+        {#if data.previousUrl || data.nextUrl}
+          <nav class="mt-8 flex items-center justify-between gap-4" aria-label="Search result pages">
+            {#if data.previousUrl}
+              <a
+                href={data.previousUrl}
+                rel="prev"
+                class="rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm font-medium outline-none transition hover:bg-neutral-50 focus-visible:ring-2 focus-visible:ring-neutral-950"
+              >
+                ← Previous
+              </a>
+            {:else}
+              <span></span>
+            {/if}
+
+            <span class="text-sm text-neutral-500">
+              Page {data.page}{data.totalPages > 0 ? ` of ${data.totalPages.toLocaleString()}` : ''}
+            </span>
+
+            {#if data.nextUrl}
+              <a
+                href={data.nextUrl}
+                rel="next"
+                class="rounded-xl bg-neutral-950 px-4 py-2.5 text-sm font-medium text-white outline-none transition hover:bg-neutral-800 focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2"
+              >
+                Next →
+              </a>
+            {:else}
+              <span></span>
+            {/if}
+          </nav>
         {/if}
       </section>
     {/if}

@@ -22,4 +22,7 @@ export type ArxivSearchOptions = {
   maxResults?: number;
   sortBy?: 'relevance' | 'lastUpdatedDate' | 'submittedDate';
   sortOrder?: 'ascending' | 'descending';
+  category?: string;
+  fromDate?: string;
+  toDate?: string;
 };
