@@ -1,8 +1,7 @@
 import { getArxivPaper, normalizeArxivId } from '$lib/server/arxiv/index.ts';
 import { error } from '@sveltejs/kit';
 
-// deno-lint-ignore no-sloppy-imports -- SvelteKit generates this virtual module.
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad } from './$types.d.ts';
 
 export const load: PageServerLoad = async ({ params, fetch }) => {
   const id = normalizeArxivId(params.id);

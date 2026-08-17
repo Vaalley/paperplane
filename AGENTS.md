@@ -2,7 +2,8 @@
 
 ## Project
 
-Paperplane is a modern frontend for arXiv built with SvelteKit, Svelte 5, TypeScript, Tailwind CSS 4, and Deno-managed tooling.
+Paperplane is a modern frontend for arXiv built with SvelteKit, Svelte 5, TypeScript, Tailwind CSS
+4, and Deno-managed tooling.
 
 Read `SPECS.md` before implementing product work.
 
@@ -26,12 +27,14 @@ Do not introduce npm/pnpm/yarn lockfiles. `deno.lock` is the project lockfile.
 - Prefer small, composable Svelte components once a route becomes complex.
 - Keep external API access in server-side modules/routes.
 - Keep arXiv-specific parsing and types isolated from UI code as the codebase grows.
-- Use TypeScript strictly. Avoid `any` unless an external boundary makes it unavoidable and document why.
+- Use TypeScript strictly. Avoid `any` unless an external boundary makes it unavoidable and document
+  why.
 - Preserve URL-addressable state for search, filters, sorting, and pagination.
 - Build accessible controls with keyboard and screen-reader behavior.
 - Treat mobile layouts as first-class.
 - Avoid dependencies for trivial utilities.
-- Do not add auth, databases, analytics, or AI providers unless the assigned issue explicitly requires them.
+- Do not add auth, databases, analytics, or AI providers unless the assigned issue explicitly
+  requires them.
 
 ## Product rules
 
@@ -49,7 +52,8 @@ deno task check
 deno task build
 ```
 
-Also run `deno task lint` and `deno task fmt --check` when applicable. Document any check that cannot be run and why.
+Also run `deno task lint` and `deno task fmt --check` when applicable. Document any check that
+cannot be run and why.
 
 ## Git / PR guidance
 
